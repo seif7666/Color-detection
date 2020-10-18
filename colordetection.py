@@ -27,14 +27,22 @@ def adjustTrackBars(index):
 def changeTracks(value):
     for i in range (len(buttons)):
         value = cv2.getTrackbarPos(colors[i] , window)
-        if value != buttons[i] and value == 1:#All other values must be set to false
-            adjustTrackBars(i)#Adjust track bars in other window
-            buttons[buttons != i] = 0
-            buttons[i] = 1
-            for j in colors:
-                if j!=colors[i]:
-                    cv2.setTrackbarPos(j,window , 0)
-            break    
+        if value != buttons[i]:#All other values must be set to false
+            if value == 1:
+                adjustTrackBars(i)#Adjust track bars in other window
+                buttons[buttons != i] = 0
+                buttons[i] = 1
+                for j in colors:
+                    if j!=colors[i]:
+                        cv2.setTrackbarPos(j,window , 0)
+                break
+            else:#Value == 0 reset
+                for i in types:
+                    cv2.setTrackbarMin(i,window2,0)
+                    cv2.setTrackbarMax(i,window2,0)
+                    cv2.setTrackbarPos(i , window2 ,0)
+                    buttons[:] = 0
+           
                 
 def getTrackBarResults(hsvCol):
     color = -1
@@ -73,6 +81,8 @@ while True:
     if ret:
         new  = cv2.bitwise_and(frame , frame , mask = mask)
         cv2.imshow("Segment" , new)
+    else:
+        cv2.destroyWindow('Segment')    
     cv2.imshow("Image" , frame)
     if cv2.waitKey(1) == ord('q'):
         break
